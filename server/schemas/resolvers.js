@@ -14,7 +14,7 @@ const resolvers = {
                     .select('-__v -password')
                     .populate('savedBooks')
 
-                return userData; 
+                return userData;
             }
 
             throw new AuthenticationError('Not logged in!');
@@ -37,14 +37,14 @@ const resolvers = {
             const user = await User.findOne({ email });
 
             // if no user found by this email, throw authentication error
-            if(!user) {
+            if (!user) {
                 throw new AuthenticationError('Incorrect credentials');
             }
 
             // check to see if passward matches encrypted password
             const correctPw = await user.isCorrectPassword(password);
             // if password is wrong, throw authentication error 
-            if(!correctPw) {
+            if (!correctPw) {
                 throw new AuthenticationError('Incorrect credentials');
             }
 
@@ -54,10 +54,39 @@ const resolvers = {
             return { user, token };
         },
 
-        saveBook: async(parent, args, context) => {
+        saveBook: async (parent, { book }, context) => {
+            // Check to see that user is logged in
+            if (context.user) {
+                // Find user based on the _id provided by context
+                // use addToSet to add the book based on the book object passed in from args
+                // addToSet is used to ensure entries are unique
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { savedBooks: book } },
+                    { new: true, runValidators: true }
+                );
+                return updatedUser;
+            }
+            // If user is not logged in, throw authentication error
+            throw new AuthenticationError('You need to be logged in to save books!');
+        },
+        // destructure args to retrieve the bookId of the book to be deleted
+        deleteBook: async (parent, { bookId }, context) => {
+            // Check to see if user is logged in 
+            if (context.user) {
+                // Find user by the id provided in the context, and pull the book out of the savedBooks field by the bookId that is passed in through args
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId: bookId } } },
+                    { new: true }
+                );
 
+                return updatedUser;
+            }
+            // If user is not logged in, throw authentication error
+            throw new AuthenticationError('You need to be logged in to delete books!');
         }
     }
 };
 
-module.exports = resolvers; 
+module.exports = resolvers;

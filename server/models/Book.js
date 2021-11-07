@@ -26,6 +26,10 @@ const bookSchema = new Schema({
     type: String,
     required: true,
   },
+}, 
+{
+   // set _id to be false to prevent duplicate objects from being added to the bookSchema
+  _id: false
 });
 
 module.exports = bookSchema;
