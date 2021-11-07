@@ -15,7 +15,7 @@ const startApolloServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    // explain this
+    // all requests go through the authMiddelware function which will either pass the request without the token if it does not exist, or attach the token data to the req.user key if it does exist
     context: authMiddleware
   });
 
