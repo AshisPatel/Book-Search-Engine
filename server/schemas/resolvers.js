@@ -12,7 +12,7 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findById({ _id: context.user._id })
                     .select('-__v -password')
-                    .populate('savedBooks')
+                    // .populate('savedBooks')
                 console.log(userData); 
                 return userData;
             }

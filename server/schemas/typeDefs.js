@@ -1,6 +1,17 @@
 // import the gql tagged template function
 const { gql } = require('apollo-server-express');
 
+
+// Input Type
+// input BookInfo {
+//     title: String
+//     bookId: String
+//     authors: [String]
+//     description: String
+//     image: String
+//     link: String
+// }
+
 const typeDefs = gql`
     type User {
         _id: ID
@@ -29,15 +40,6 @@ const typeDefs = gql`
         me: User 
     }
 
-    input BookInfo {
-        title: String
-        bookId: String
-        authors: [String]
-        description: String
-        image: String
-        link: String
-    }
-
     type Mutation {
         login(email: String!, password: String!): Auth
         addUser(username: String!, email: String!, password: String!): Auth
@@ -47,4 +49,4 @@ const typeDefs = gql`
     }
 `;
 
-module.exports = typeDefs; 
+module.exports = typeDefs;
