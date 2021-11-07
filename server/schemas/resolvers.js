@@ -1,6 +1,6 @@
 const { User } = require('../models');
 const { signToken } = require('../utils/auth');
-const { AuthenticationError } = require('apollo-server-express');
+const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
 const resolvers = {
     Query: {
@@ -56,14 +56,20 @@ const resolvers = {
         saveBook: async (parent, { book }, context) => {
             // Check to see that user is logged in
             if (context.user) {
-                // Find user based on the _id provided by context
-                // use addToSet to add the book based on the book object passed in from args
-                // addToSet is used to ensure entries are unique
-                const updatedUser = await User.findByIdAndUpdate(
-                    { _id: context.user._id },
-                    { $addToSet: { savedBooks: book } },
+                // Find user based on two conditions
+                // 1st - _id based on context
+                // 2nd - the user cannot have a book with the requrested book.bookId in their savedBooks field (handled by the $ne operator)
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id, 'savedBooks.bookId' : {$ne: book.bookId } },
+                    { $push: { savedBooks: book } },
                     { new: true, runValidators: true }
                 );
+                // If the user tries to add a duplicate book, then updatedUser will not exist
+                // Thus, throw userInputError from Apollo-Server
+                if (!updatedUser) {
+                    throw new UserInputError('You cannot save duplicate books to your book list!');
+                }
+
                 return updatedUser;
             }
             // If user is not logged in, throw authentication error
