@@ -18,13 +18,6 @@ const resolvers = {
             }
 
             throw new AuthenticationError('Not logged in!');
-        },
-        all: async () => {
-            const usersData = await User.find()
-                .select('-__v -password')
-                .populate('savedBooks')
-            
-            return usersData; 
         }
     },
 

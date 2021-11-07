@@ -27,7 +27,6 @@ const typeDefs = gql`
 
     type Query {
         me: User 
-        all: [User]
     }
 
     input BookInfo {
