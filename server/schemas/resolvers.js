@@ -10,7 +10,7 @@ const resolvers = {
             // if the token was succesfully detected, then we will pass back the request as context with an additional .user key
             // The .user key contains the token in the ._id key
             if (context.user) {
-                const userData = await User.findOne({ _id: context.user_id })
+                const userData = await User.findOne({ _id: context.user._id })
                     .select('-__v -password')
                     .populate('savedBooks')
 
@@ -55,7 +55,7 @@ const resolvers = {
         },
 
         saveBook: async(parent, args, context) => {
-            
+
         }
     }
 };
