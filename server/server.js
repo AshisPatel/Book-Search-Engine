@@ -1,5 +1,5 @@
 const { ApolloServer } = require('apollo-server-express');
-const { typeDefs, resolvers } = require('./config/connection');
+const { typeDefs, resolvers } = require('./schemas');
 const { authMiddleware } = require('./utils/auth');
 const express = require('express');
 const path = require('path');
@@ -36,11 +36,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // This is a wildcard route that if any route is sent to the server that is not a DB / server recognized route, it will server assets from the react front end
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
 
-app.use(routes);
+// app.use(routes);
 
 db.once('open', () => {
   app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
