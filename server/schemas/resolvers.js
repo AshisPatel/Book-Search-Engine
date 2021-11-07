@@ -12,7 +12,6 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findById({ _id: context.user._id })
                     .select('-__v -password')
-                    // .populate('savedBooks')
                 console.log(userData); 
                 return userData;
             }
@@ -54,7 +53,7 @@ const resolvers = {
             return { user, token };
         },
 
-        saveBook: async (parent, args, context) => {
+        saveBook: async (parent, { book }, context) => {
             // Check to see that user is logged in
             if (context.user) {
                 // Find user based on the _id provided by context
@@ -62,7 +61,7 @@ const resolvers = {
                 // addToSet is used to ensure entries are unique
                 const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: args } },
+                    { $addToSet: { savedBooks: book } },
                     { new: true, runValidators: true }
                 );
                 return updatedUser;
@@ -85,19 +84,6 @@ const resolvers = {
             }
             // If user is not logged in, throw authentication error
             throw new AuthenticationError('You need to be logged in to delete books!');
-        },
-        addWord: async (parent, { word }, context) => {
-            if (context.user) {
-                const updatedUser = await User.findByIdAndUpdate(
-                    { _id: context.user._id },
-                    { $push: {words: word} },
-                    { new: true}
-                );
-
-                return updatedUser; 
-            }
-
-            throw new AuthenticationError('This was a test that failed.');
         }
     }
 };
