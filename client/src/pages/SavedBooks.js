@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 import { removeBookId } from '../utils/localStorage';
 
@@ -9,10 +9,13 @@ import { DELETE_BOOK } from '../utils/mutations';
 const SavedBooks = () => {
 
   // query for the user's information
-  const { loading, data: userData } = useQuery(GET_ME);
+  const { loading, data } = useQuery(GET_ME);
+
   // import REMOVE_BOOK mutation
   const [deleteBook] = useMutation(DELETE_BOOK);
 
+  // Check to see if the query GET_ME is completed, and if it is access the "me" object from data
+  const userData = data?.me || {};
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     // const token = Auth.loggedIn() ? Auth.getToken() : null;
