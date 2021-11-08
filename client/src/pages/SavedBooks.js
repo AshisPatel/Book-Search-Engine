@@ -31,15 +31,17 @@ const SavedBooks = () => {
     }
   };
 
+   // if data isn't here yet, say so
+   if (loading) {
+    return <h2>LOADING...</h2>;
+  }
+
   // safe guard the /saved route by displaying a generic message when the user is not signed in
   if (!userData?.username) {
     return <h5>You need to be logged in to access your saved books list. Please login or sign-up using the navbar above!</h5>
   } 
 
-  // if data isn't here yet, say so
-  if (loading) {
-    return <h2>LOADING...</h2>;
-  }
+ 
 
   return (
     <>
