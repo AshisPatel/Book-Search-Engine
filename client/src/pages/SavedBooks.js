@@ -11,29 +11,14 @@ const SavedBooks = () => {
   // query for the user's information
   const { loading, data } = useQuery(GET_ME);
 
-  // import REMOVE_BOOK mutation
+  // import DELETE_BOOK mutation
   const [deleteBook] = useMutation(DELETE_BOOK);
 
   // Check to see if the query GET_ME is completed, and if it is access the "me" object from data
   const userData = data?.me || {};
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
-    // const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    // if (!token) {
-    //   return false;
-    // }
-
     try {
-      // const response = await deleteBook(bookId, token);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const updatedUser = await response.json();
-      // setUserData(updatedUser);
-
       // call removeBook mutation that takes in the bookId parameter 
       await deleteBook({
         variables: {bookId: bookId}
@@ -45,6 +30,11 @@ const SavedBooks = () => {
       console.error(err);
     }
   };
+
+  // safe guard the /saved route by displaying a generic message when the user is not signed in
+  if (!userData?.username) {
+    return <h5>You need to be logged in to access your saved books list. Please login or sign-up using the navbar above!</h5>
+  } 
 
   // if data isn't here yet, say so
   if (loading) {
@@ -87,37 +77,3 @@ const SavedBooks = () => {
 };
 
 export default SavedBooks;
-
-
-// old code using API
-  // const [userData, setUserData] = useState({});
-
-  // // use this to determine if `useEffect()` hook needs to run again
-  // const userDataLength = Object.keys(userData).length;
-
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-  //       if (!token) {
-  //         return false;
-  //       }
-
-  //       const response = await getMe(token);
-
-  //       if (!response.ok) {
-  //         throw new Error('something went wrong!');
-  //       }
-
-  //       const user = await response.json();
-  //       setUserData(user);
-
-
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   getUserData();
-  // }, [userDataLength]);
